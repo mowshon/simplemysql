@@ -149,7 +149,7 @@ class SimpleMysql:
 
 		sql = "INSERT INTO %s (%s) VALUES(%s)" % (table, query[0], query[1])
 
-		return self.query(sql, data.values()).rowcount
+		return self.query(sql, list(data.values())).rowcount
 
 	def insertBatch(self, table, data):
 		"""Insert multiple record"""
@@ -169,7 +169,7 @@ class SimpleMysql:
 		if where and len(where) > 0:
 			sql += " WHERE %s" % where[0]
 
-		return self.query(sql, data.values() + where[1] if where and len(where) > 1 else data.values()
+		return self.query(sql, list(data.values()) + where[1] if where and len(where) > 1 else list(data.values())
 						).rowcount
 
 
@@ -184,7 +184,7 @@ class SimpleMysql:
 
 		sql = "INSERT INTO %s (%s) VALUES(%s) ON DUPLICATE KEY UPDATE %s" % (table, insert[0], insert[1], update)
 
-		return self.query(sql, insert_data.values() + data.values() ).rowcount
+		return self.query(sql, list(insert_data.values()) + list(data.values()) ).rowcount
 
 	def delete(self, table, where = None):
 		"""Delete rows based on a where condition"""
