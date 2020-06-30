@@ -156,7 +156,7 @@ class SimpleMysql:
 
 		query = self._serialize_batch_insert(data)
 		sql = "INSERT INTO %s (%s) VALUES %s" % (table, query[0], query[1])
-		flattened_values = [v for sublist in data for k,v in sublist.iteritems()]
+		flattened_values = [v for sublist in data for k,v in sublist.items()]
 		return self.query(sql,flattened_values).rowcount
 
 	def update(self, table, data, where = None):
@@ -233,21 +233,21 @@ class SimpleMysql:
 
 	def _serialize_insert(self, data):
 		"""Format insert dict values into strings"""
-		keys = ",".join( data.keys() )
+		keys = ",".join( list(data.keys()) )
 		vals = ",".join(["%s" for k in data])
 
 		return [keys, vals]
 
 	def _serialize_batch_insert(self, data):
 		"""Format insert dict values into strings"""
-		keys = ",".join( data[0].keys() )
+		keys = ",".join( list(data[0].keys()) )
 		v = "(%s)" % ",".join(tuple("%s".rstrip(',') for v in range(len(data[0]))))
 		l = ','.join(list(repeat(v,len(data))))
 		return [keys, l]
 
 	def _serialize_update(self, data):
 		"""Format update dict values into string"""
-		return "=%s,".join( data.keys() ) + "=%s"
+		return "=%s,".join( list(data.keys()) ) + "=%s"
 
 
 	def _select(self, table=None, fields=(), where=None, order=None, limit=None):
