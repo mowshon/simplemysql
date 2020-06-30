@@ -1,5 +1,4 @@
-#SimpleMysql
-Python3 Compatible Version of simplemysql.
+Python3 Compatible Version of simplemysql.<br>
 An ultra simple wrapper for Python MySQLdb with very basic functionality.
 
 ## Installation
