@@ -41,7 +41,6 @@ class SimpleMysql:
 		self.conf["port"] = kwargs.get("port", 3306)
 		self.conf["autocommit"] = kwargs.get("autocommit", False)
 		self.conf["read_timeout"] = kwargs.get("read_timeout",60)
-		self.conf["threadsafety"] = kwargs.get("threadsafety",1)
 		self.conf["ssl"] = kwargs.get("ssl", False)
 		self.connect()
 
@@ -53,13 +52,13 @@ class SimpleMysql:
 			    self.conn = MySQLdb.connect(db=self.conf['db'], host=self.conf['host'],
 										port=self.conf['port'], user=self.conf['user'],
 										passwd=self.conf['passwd'],
-										charset=self.conf['charset'],read_timeout=self.conf["read_timeout"],threadsafety=self.conf["threadsafety"])
+										charset=self.conf['charset'],read_timeout=self.conf["read_timeout"])
 			else:
 			    self.conn = MySQLdb.connect(db=self.conf['db'], host=self.conf['host'],
 										port=self.conf['port'], user=self.conf['user'],
 										passwd=self.conf['passwd'],
 										ssl=self.conf['ssl'],
-										charset=self.conf['charset'],read_timeout=self.conf["read_timeout"],threadsafety=self.conf["threadsafety"])
+										charset=self.conf['charset'],read_timeout=self.conf["read_timeout"])
 			self.cur = self.conn.cursor()
 			self.conn.autocommit(self.conf["autocommit"])
 		except:
