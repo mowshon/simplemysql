@@ -40,6 +40,7 @@ class SimpleMysql:
 		self.conf["host"] = kwargs.get("host", "localhost")
 		self.conf["port"] = kwargs.get("port", 3306)
 		self.conf["autocommit"] = kwargs.get("autocommit", False)
+		self.conf["read_timeout"] = kwargs.get("read_timeout",60)
 		self.conf["ssl"] = kwargs.get("ssl", False)
 		self.connect()
 
@@ -51,13 +52,13 @@ class SimpleMysql:
 			    self.conn = MySQLdb.connect(db=self.conf['db'], host=self.conf['host'],
 										port=self.conf['port'], user=self.conf['user'],
 										passwd=self.conf['passwd'],
-										charset=self.conf['charset'])
+										charset=self.conf['charset'],read_timeout=self.conf["read_timeout"])
 			else:
 			    self.conn = MySQLdb.connect(db=self.conf['db'], host=self.conf['host'],
 										port=self.conf['port'], user=self.conf['user'],
 										passwd=self.conf['passwd'],
 										ssl=self.conf['ssl'],
-										charset=self.conf['charset'])
+										charset=self.conf['charset'],read_timeout=self.conf["read_timeout"])
 			self.cur = self.conn.cursor()
 			self.conn.autocommit(self.conf["autocommit"])
 		except:
@@ -149,14 +150,14 @@ class SimpleMysql:
 
 		sql = "INSERT INTO %s (%s) VALUES(%s)" % (table, query[0], query[1])
 
-		return self.query(sql, data.values()).rowcount
+		return self.query(sql, list(data.values())).rowcount
 
 	def insertBatch(self, table, data):
 		"""Insert multiple record"""
 
 		query = self._serialize_batch_insert(data)
 		sql = "INSERT INTO %s (%s) VALUES %s" % (table, query[0], query[1])
-		flattened_values = [v for sublist in data for k,v in sublist.iteritems()]
+		flattened_values = [v for sublist in data for k,v in sublist.items()]
 		return self.query(sql,flattened_values).rowcount
 
 	def update(self, table, data, where = None):
@@ -169,7 +170,7 @@ class SimpleMysql:
 		if where and len(where) > 0:
 			sql += " WHERE %s" % where[0]
 
-		return self.query(sql, data.values() + where[1] if where and len(where) > 1 else data.values()
+		return self.query(sql, list(data.values()) + where[1] if where and len(where) > 1 else list(data.values())
 						).rowcount
 
 
@@ -184,7 +185,7 @@ class SimpleMysql:
 
 		sql = "INSERT INTO %s (%s) VALUES(%s) ON DUPLICATE KEY UPDATE %s" % (table, insert[0], insert[1], update)
 
-		return self.query(sql, insert_data.values() + data.values() ).rowcount
+		return self.query(sql, list(insert_data.values()) + list(data.values()) ).rowcount
 
 	def delete(self, table, where = None):
 		"""Delete rows based on a where condition"""
@@ -205,7 +206,7 @@ class SimpleMysql:
 			self.cur.execute(sql, params)
 		except MySQLdb.OperationalError as e:
 			# mysql timed out. reconnect and retry once
-			if e[0] == 2006:
+			if e.args[0] == 2006:
 				self.connect()
 				self.cur.execute(sql, params)
 			else:
@@ -233,21 +234,21 @@ class SimpleMysql:
 
 	def _serialize_insert(self, data):
 		"""Format insert dict values into strings"""
-		keys = ",".join( data.keys() )
+		keys = ",".join( list(data.keys()) )
 		vals = ",".join(["%s" for k in data])
 
 		return [keys, vals]
 
 	def _serialize_batch_insert(self, data):
 		"""Format insert dict values into strings"""
-		keys = ",".join( data[0].keys() )
+		keys = ",".join( list(data[0].keys()) )
 		v = "(%s)" % ",".join(tuple("%s".rstrip(',') for v in range(len(data[0]))))
 		l = ','.join(list(repeat(v,len(data))))
 		return [keys, l]
 
 	def _serialize_update(self, data):
 		"""Format update dict values into string"""
-		return "=%s,".join( data.keys() ) + "=%s"
+		return "=%s,".join( list(data.keys()) ) + "=%s"
 
 
 	def _select(self, table=None, fields=(), where=None, order=None, limit=None):

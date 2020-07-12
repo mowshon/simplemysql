@@ -1,14 +1,10 @@
-#SimpleMysql
-An ultra simple wrapper for Python MySQLdb with very basic functionality
-
-- Kailash Nadh, June 2013
-- Documentation: [http://nadh.in/code/simplemysql](http://nadh.in/code/simplemysql)
-- License: GPL v2
+Python3 Compatible Version of simplemysql.<br>
+An ultra simple wrapper for Python MySQLdb with very basic functionality.
 
 ## Installation
 With pip or easy_install
 
-```pip install simplemysql``` or ```easy_install simplemysql```
+```pip3 install git+https://github.com/elis-k/simplemysql```
 
 Or from the source
 
