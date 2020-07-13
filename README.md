@@ -4,7 +4,7 @@ An ultra simple wrapper for Python MySQLdb with very basic functionality.
 ## Installation
 With pip or easy_install
 
-```pip3 install git+https://github.com/elis-k/simplemysql```
+```pip3 install git+https://github.com/mowshon/simplemysql```
 
 Or from the source
 
